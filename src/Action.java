@@ -1,10 +1,10 @@
 
 public class Action {
 
-	static final int ACTION_SHOLDER_NEGATIVE = 0;
-	static final int ACTION_SHOLDER_POSITIVE = 1;
-	static final int ACTION_ELBOW_NEGATIVE = 2;
-	static final int ACTION_ELBOW_POSITIVE = 3;
+	static final int ACTION_SHOLDER_UP = 0; //negative
+	static final int ACTION_SHOLDER_DOWN = 1; //positive
+	static final int ACTION_ELBOW_UP = 2; //negative
+	static final int ACTION_ELBOW_DOWN = 3; //positive
 	
 	private static final Action[] actions = new Action[] {
 		new Action(Members.SHOULDER, -RobotSpecs.ANGLE_ROTATION),
