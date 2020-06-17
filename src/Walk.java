@@ -114,8 +114,8 @@ public class Walk {
 				//new state
 				s = _s;
 				
-				printQ();
-				sleep(500);
+				//printQ();
+				//sleep(500);
 			}
 			
 			if(this.robot.isTouchSensorPressed()){
