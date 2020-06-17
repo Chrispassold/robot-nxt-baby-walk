@@ -10,8 +10,8 @@ public class Walk {
 	
 	private double epsilon = 1.0;
 	
-	private final int reward = 100;
-	private final int penality = -1000;
+	private final int reward = 10;
+	private final int penality = -100;
 	
 	private final int epochs = 4;
 	
@@ -67,24 +67,17 @@ public class Walk {
 		int maxAction = currentStateActions[maxActionIdx];
 		int[] actions = actionByState[state];	
 		
+		print("max ini: "+ maxActionIdx);
 		for(int i = 0; i < currentStateActions.length; i++){
 			int current = currentStateActions[i];
 			if(current > maxAction && i < actions.length){
-				if(actions[i] >= 0){
+				if(i >= 0 && actions[i] >= 0){
 					maxAction = current;
 					maxActionIdx = i;
 				}
 			}
 		}
-		
-		try{
-			print("max" + actions[maxActionIdx]);
-		}catch(Exception e){
-			print("state" + state);
-			print("action" + maxActionIdx);
-			print("achei");
-		}
-		
+		print("max fim: "+ maxActionIdx);
 		return actions[maxActionIdx];
 
 	}
@@ -135,19 +128,23 @@ public class Walk {
 			for(int i = 0; i < epochs; i++){
 				//escolher ação A para o estado S
 				int a = getAnyAction(s);
-				//executar ação
-				executeAction(a);
-				//novo estado _s
-				int _s = getNextState(s, a);
-				//recompensa
-				int r = getReward();
-				//max Q
-				int maxQ = getHigherQActionByState(_s);
-				//Q-learning
-				Q[s][a] = (int)(Q[s][a] + alpha * (r + gamma * maxQ - Q[s][a]));
 				
-				//new state
-				s = _s;
+				if(actionByState[s][a] != s){
+					//executar ação
+					executeAction(a);
+					//novo estado _s
+					int _s = getNextState(s, a);
+					//recompensa
+					int r = getReward();
+					//max Q
+					int maxQ = getHigherQActionByState(_s);
+					//Q-learning
+					Q[s][a] = (int)(Q[s][a] + alpha * (r + gamma * maxQ - Q[s][a]));
+					
+					//new state
+					s = _s;
+				}
+				
 			}
 			
 			this.epsilon -= 0.1;

@@ -29,10 +29,9 @@ public class Main {
 		try{
 			walk.execute();
 		}catch(ArrayIndexOutOfBoundsException e){
-			robot.pause();
 			print("DEU ERRO");
 		}finally{
-			walk.printQ();
+			//walk.printQ();
 		}
 		
 		print("Pressione o botao para sair");
