@@ -13,7 +13,7 @@ public class Walk {
 	private final int reward = 100;
 	private final int penality = -1000;
 	
-	private final int epochs = 15;
+	private final int epochs = 4;
 	
 	private final int stateSize = 4;
 	private final int actionSize = 4;
@@ -63,16 +63,26 @@ public class Walk {
 	
 	private int getHigherQActionByState(int state){
 		int[] currentStateActions = Q[state];
-		int maxAction = Q[state][0];
 		int maxActionIdx = 0;
+		int maxAction = currentStateActions[maxActionIdx];
 		int[] actions = actionByState[state];	
 		
 		for(int i = 0; i < currentStateActions.length; i++){
 			int current = currentStateActions[i];
-			if(current > maxAction && actions[i] >= 0){
-				maxAction = current;
-				maxActionIdx = i;
+			if(current > maxAction && i < actions.length){
+				if(actions[i] >= 0){
+					maxAction = current;
+					maxActionIdx = i;
+				}
 			}
+		}
+		
+		try{
+			print("max" + actions[maxActionIdx]);
+		}catch(Exception e){
+			print("state" + state);
+			print("action" + maxActionIdx);
+			print("achei");
 		}
 		
 		return actions[maxActionIdx];

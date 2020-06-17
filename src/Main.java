@@ -16,9 +16,7 @@ public class Main {
 		
 		Walk walk = new Walk(robot, State.MENOS_MENOS);
 		
-		print("Inicializando...");
-		Thread.sleep(1000);
-		
+		print("Inicializando...");		
 		print("Calibrar");
 		while(!robot.isTouchSensorPressed()){
 			print("Distancia: "+ robot.getDistance());
@@ -31,13 +29,14 @@ public class Main {
 		try{
 			walk.execute();
 		}catch(ArrayIndexOutOfBoundsException e){
+			robot.pause();
 			print("DEU ERRO");
 		}finally{
 			walk.printQ();
 		}
 		
 		print("Pressione o botao para sair");
-		while(!robot.isTouchSensorPressed()){}
+		robot.pause();
 		
 //		for (int i = 0; i < 1; i++) {
 //			robot.doAction(Action.ACTION_SHOLDER_UP);

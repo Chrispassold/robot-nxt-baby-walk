@@ -49,4 +49,9 @@ public class Robot {
 		return this.distanceSensor.getDistance();
 	}
 	
+	public void pause(){
+		System.out.println("pause");
+		while(!this.isTouchSensorPressed()){}
+	}
+	
 }
