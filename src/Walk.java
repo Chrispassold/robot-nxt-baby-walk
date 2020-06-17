@@ -8,13 +8,6 @@ public class Walk {
 	private final double alpha = 0.8;
 	private final double gamma = 0.5;
 	
-	private double epsilon = 1.0;
-	
-	private final int reward = 10;
-	private final int penality = -100;
-	
-	private final int epochs = 4;
-	
 	private final int stateSize = 4;
 	private final int actionSize = 4;
 
@@ -61,54 +54,35 @@ public class Walk {
 		actionByState[State.MAIS_MAIS][Action.ACTION_ELBOW_UP] = State.MAIS_MENOS;
 	}
 	
-	private int getHigherQActionByState(int state){
+	private int getHigherQActionByState(int state){		
 		int[] currentStateActions = Q[state];
 		int maxActionIdx = 0;
-		int maxAction = currentStateActions[maxActionIdx];
-		int[] actions = actionByState[state];	
+		int maxAction = currentStateActions[maxActionIdx];	
 		
-		print("max ini: "+ maxActionIdx);
-		for(int i = 0; i < currentStateActions.length; i++){
+		for(int i = 0; i < actionSize; i++){
 			int current = currentStateActions[i];
-			if(current > maxAction && i < actions.length){
-				if(i >= 0 && actions[i] >= 0){
-					maxAction = current;
-					maxActionIdx = i;
-				}
-			}
-		}
-		print("max fim: "+ maxActionIdx);
-		return actions[maxActionIdx];
-
-	}
-	
-	private int getRandomAction(int[] actions){
-		int i = (int)Math.round(random.nextFloat()*10.0);
-		if(i < actions.length){
-			if(actions[i] >= 0){
-				return i;
+			if(current > maxAction){
+				maxAction = current;
+				maxActionIdx = i;
 			}
 		}
 		
-		return getRandomAction(actions);
+		return maxActionIdx;
 	}
 	
-	private int getAnyAction(int state){
-		if(random.nextFloat() < epsilon){
-			return this.getRandomAction(actionByState[state]);
+	private int getRandomAction(int s){
+		while(true){
+			int a = random.nextInt(actionSize*100)/100;
+			if(actionByState[s][a] >= 0)
+				return a;
 		}
-		
-		return this.getHigherQActionByState(state);
 	}
 	
 	private int getReward(){
 		int distance = robot.getDistance();
-		
-		if(distance >= currentDistance){
-			return penality;
-		}else{
-			return reward;
-		}
+		int reward = currentDistance - distance;
+		currentDistance = distance;
+		return reward;
 	}
 	
 	private int getNextState(int state, int action){
@@ -122,41 +96,45 @@ public class Walk {
 	public void execute(){
 		this.currentDistance = robot.getDistance();
 		int s = this.state;
-		int count = 0;
 		while(!stop){
-			print("epoch: "+ count);
-			for(int i = 0; i < epochs; i++){
-				//escolher ação A para o estado S
-				int a = getAnyAction(s);
-				
-				if(actionByState[s][a] != s){
-					//executar ação
-					executeAction(a);
-					//novo estado _s
-					int _s = getNextState(s, a);
-					//recompensa
-					int r = getReward();
-					//max Q
-					int maxQ = getHigherQActionByState(_s);
-					//Q-learning
-					Q[s][a] = (int)(Q[s][a] + alpha * (r + gamma * maxQ - Q[s][a]));
-					
-					//new state
-					s = _s;
-				}
-				
-			}
+			//escolher ação A para o estado S
+			int a = getRandomAction(s);
 			
-			this.epsilon -= 0.1;
+			if(actionByState[s][a] != s){
+				//executar ação
+				executeAction(a);
+				//novo estado _s
+				int _s = getNextState(s, a);
+				//recompensa
+				int r = getReward();
+				//max Q
+				int _a = getHigherQActionByState(_s);
+				//Q-learning
+				Q[s][a] = (int)(Q[s][a] + alpha * (r + gamma * Q[_s][_a] - Q[s][a]));
+				//new state
+				s = _s;
+				
+				printQ();
+				sleep(500);
+			}
 			
 			if(this.robot.isTouchSensorPressed()){
 				this.stop = true;
-			}
-				
+			}	
+		}
+		
+		print("Repetindo treinamento");
+		sleep(5000);
+		
+		while(!this.robot.isTouchSensorPressed()){
+			int a = getHigherQActionByState(s);
+			executeAction(a);
+			s = getNextState(s, a);
 		}
 	}
 	
 	void printQ(){
+		System.out.flush();
         for (int i = 0; i < Q.length; i++) {
             for (int j = 0; j < Q[i].length; j++) {
                 System.out.print(Q[i][j] + " ");
@@ -167,6 +145,13 @@ public class Walk {
 	
 	private void print(String message){
 		System.out.println(message);
+	}
+	
+	private void sleep(long milis){
+		try{
+			Thread.sleep(milis);
+		}catch(Exception e){
+		}
 	}
 	
 }

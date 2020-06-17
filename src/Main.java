@@ -30,11 +30,11 @@ public class Main {
 			walk.execute();
 		}catch(ArrayIndexOutOfBoundsException e){
 			print("DEU ERRO");
-		}finally{
-			//walk.printQ();
 		}
 		
 		print("Pressione o botao para sair");
+		Thread.sleep(3000);
+		walk.printQ();
 		robot.pause();
 		
 //		for (int i = 0; i < 1; i++) {
